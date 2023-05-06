@@ -1,3 +1,4 @@
+<head><link rel='icon' type='image/png' href='../favicon.png' /></head>
 <script>
   import { onDestroy } from "svelte";
   import teamTimeData from "../timeData.json"
@@ -38,8 +39,12 @@
             extraDetails = Object.entries(teamData).filter((entry) => entry[0] != "avatarData")
           } else {
             description = "Unfortunately, I wasn't able to find this team! 😦"
+            website = undefined
+            extraDetails = undefined
           }
           displayText = teamData["nickname"] + ` (${teamData["team_number"]})`
+          
+
       }
   }, 1000)
 
@@ -74,7 +79,6 @@
   onDestroy(() => clearInterval(updateLoop))
 </script>  
 
-
 <div class="hero min-h-screen bg-base-200">
     <div class="hero-content text-center">
       <div class="inset-0">
@@ -99,7 +103,7 @@
           </div>
         <div>
         <div class="text-md italic pt-5 pb-5">Powered by <a class="text-blue-500 underline" href="https://www.thebluealliance.com">The Blue Alliance</a></div>
-        {#if moreInfoOpen} 
+        {#if moreInfoOpen && extraDetails != undefined} 
           <div class="py-6">
             <table class="table-fixed max-w-lg bg-blue-400 border-separate">
               {#each extraDetails as detail}
