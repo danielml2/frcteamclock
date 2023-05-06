@@ -41,6 +41,7 @@
             description = "Unfortunately, I wasn't able to find this team! 😦"
             website = undefined
             extraDetails = undefined
+            avatar = "None"
           }
           displayText = teamData["nickname"] + ` (${teamData["team_number"]})`
           
@@ -82,32 +83,32 @@
 <div class="hero min-h-screen bg-base-200">
     <div class="hero-content text-center">
       <div class="inset-0">
-        <h2 class="text-2xl">The current time is {lastDateString} which coorelates to FRC Team:</h2>
+        <h2 class="text-2xl dark:text-white">The current time is {lastDateString} which coorelates to FRC Team:</h2>
         {#if avatar != "None"}
           <div class="flex flex-row justify-center"><img class="h-32 w-32" src={"data:image/png;base64," + avatar}/></div>
         {/if}
-        <h1 class="text-5xl font-bold">{displayText}</h1>
-        <p class="pt-6 pb-6 max-width-md">
+        <h1 class="text-5xl font-bold dark:text-white">{displayText}</h1>
+        <p class="pt-6 pb-6 max-width-md dark:text-white">
           {@html description} 
         </p>
         <div class="btn-group pt-15">
           <button on:click={() => moreInfoOpen = !moreInfoOpen} class="btn btn-primary">More info</button>
           <button on:click={() => {
             location.href = `https://www.thebluealliance.com/team/${teamNumber}`
-          }} class="btn bg-blue-700">TBA Page</button>
+          }} class="btn dark:bg-blue-700 bg-blue-700 dark:text-white">TBA Page</button>
           {#if website != undefined}
             <button on:click={() => {
               location.href = `${website}`
-            }} class="btn bg-green-700">Team Website</button>
+            }} class="btn bg-green-700 dark:bg-green-700 dark:text-white">Team Website</button>
           {/if}
           </div>
         <div>
-        <div class="text-md italic pt-5 pb-5">Powered by <a class="text-blue-500 underline" href="https://www.thebluealliance.com">The Blue Alliance</a></div>
+        <div class="dark:text-white text-md italic pt-5 pb-5">Powered by <a class="dark:text-blue-500 text-blue-500  underline" href="https://www.thebluealliance.com">The Blue Alliance</a></div>
         {#if moreInfoOpen && extraDetails != undefined} 
-          <div class="py-6">
-            <table class="table-fixed max-w-lg bg-blue-400 border-separate">
+        <div class="py-6">
+            <table class="table-fixed max-w-md bg-blue-400 dark:bg-blue-600 border-separate">
               {#each extraDetails as detail}
-                <tr class=""><td class="p-5 font-bold">{capitalize(detail[0])}</td><td class=""><div class="text-sm">{detail[1] == null ? "None" : detail[1]}</div></td></tr>
+                <tr class="dark:text-white"><td class="px-5 py-3 font-bold">{capitalize(detail[0])}</td><td class=""><div class="text-sm">{detail[1] == null ? "Not specified" : detail[1]}</div></td></tr>
               {/each}
             </table>
           </div>
