@@ -78,7 +78,7 @@
   }
 
   let onlineClockWatchers = 0;
-  import { initializeApp } from "firebase/app";
+  import { initializeApp, getApps } from "firebase/app";
   import { getFirestore , runTransaction, doc, onSnapshot} from "firebase/firestore"
   const firebaseConfig = {
     apiKey: "AIzaSyDlaAXrFNtkgcOMcjO4TrsBgvdTd-JOS7c",
@@ -89,7 +89,7 @@
     appId: "1:528853227081:web:99023a4dee858c01989198"
   };
 
-  const app = initializeApp(firebaseConfig);
+  const app = getApps().length == 0 ? initializeApp(firebaseConfig) : getApps()[0]
   const firestore = getFirestore(app);
 
   
@@ -108,20 +108,17 @@
   })
 
   let mounted = false;
-  let unsub;
   onMount(() => {
     if(!mounted) {
       incrementCount()
-      unsub = onSnapshot(docRef, (snapshot) => {
+      onSnapshot(docRef, (snapshot) => {
       onlineClockWatchers = snapshot.data().count
     })
     window.addEventListener('beforeunload', () => {
         fetch("/api/logout")
-        unsub()
     });
     mounted = true;
     }
-    console.log(mounted)
     
   })
 </script>  
