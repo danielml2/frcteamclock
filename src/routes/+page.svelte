@@ -1,6 +1,6 @@
 <head><link rel='icon' type='image/png' href='../favicon.png' /></head>
 <script>
-  import { onDestroy } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import teamTimeData from "../timeData.json"
 
   let displayText = "Loading..";
@@ -77,12 +77,59 @@
     return ""
   }
 
-  onDestroy(() => clearInterval(updateLoop))
+  let onlineClockWatchers = 0;
+  import { initializeApp } from "firebase/app";
+  import { getFirestore , runTransaction, doc, onSnapshot} from "firebase/firestore"
+  const firebaseConfig = {
+    apiKey: "AIzaSyDlaAXrFNtkgcOMcjO4TrsBgvdTd-JOS7c",
+    authDomain: "frcteamclock-counter.firebaseapp.com",
+    projectId: "frcteamclock-counter",
+    storageBucket: "frcteamclock-counter.appspot.com",
+    messagingSenderId: "528853227081",
+    appId: "1:528853227081:web:99023a4dee858c01989198"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const firestore = getFirestore(app);
+
+  
+  
+  const docRef = doc(firestore, "counters", "visitors")
+  async function incrementCount() {
+    runTransaction(firestore, async (transaction) => {
+      let docSnap = await transaction.get(docRef)
+      transaction.update(docRef, { count: docSnap.data().count + 1})
+      onlineClockWatchers = docSnap.data().count + 1;
+    })
+  }
+  
+  onDestroy(() => {
+    clearInterval(updateLoop)
+  })
+
+  let mounted = false;
+  let unsub;
+  onMount(() => {
+    if(!mounted) {
+      incrementCount()
+      unsub = onSnapshot(docRef, (snapshot) => {
+      onlineClockWatchers = snapshot.data().count
+    })
+    window.addEventListener('beforeunload', () => {
+        fetch("/api/logout")
+        unsub()
+    });
+    mounted = true;
+    }
+    console.log(mounted)
+    
+  })
 </script>  
 
-<div class="hero min-h-screen bg-base-200">
+<div class="hero min-h-screen bg-base-200" >
     <div class="hero-content text-center">
       <div class="inset-0">
+        <h3 class="text-lg py-5">You're watching the clock with {onlineClockWatchers-1} other {onlineClockWatchers-1 >= 2 || onlineClockWatchers-1 == 0 ? "people" : "person"}.</h3>
         <h2 class="text-2xl dark:text-white">The current time is {lastDateString} which coorelates to FRC Team:</h2>
         {#if avatar != "None"}
           <div class="flex flex-row justify-center"><img class="h-32 w-32" src={"data:image/png;base64," + avatar}/></div>
