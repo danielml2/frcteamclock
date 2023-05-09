@@ -119,25 +119,33 @@
   });
 
   let mounted = false;
+  let unsubscribeListener;
+
   onMount(() => {
     if (!mounted) {
-      onSnapshot(docRef, (snapshot) => {
-        onlineClockWatchers = snapshot.data().count;
-      });
+      subscribeListener()
       mounted = true;
       incrementCount();
     }
   });
 
-  function updateVisibility() {
+  function subscribeListener() {
+    unsubscribeListener = onSnapshot(docRef, (snapshot) => {
+        onlineClockWatchers = snapshot.data().count;
+    });
+  }
+
+  function updateCounterOnVisibility() {
     if (document.visibilityState == "visible") {
       if (!alreadyIncremented) 
       {
          incrementCount();
          alreadyDecremented = false;
+         subscribeListener()
       }
     } else {
       if(!alreadyDecremented) {
+        unsubscribeListener()
         alreadyIncremented = false;
         fetch("/api/logout");
         alreadyDecremented = true;
@@ -146,9 +154,10 @@
     }
   }
 
-  function decrementCounter(event) {
+  function unloadDecrementCounter() {
     alreadyDecremented = true;
     fetch("/api/logout");
+    unsubscribeListener()
     return "...";
   }
 </script>
@@ -156,8 +165,8 @@
 <head><link rel="icon" type="image/png" href="../favicon.png" /></head>
 
 <svelte:window
-  on:beforeunload={decrementCounter}
-  on:visibilitychange={updateVisibility}
+  on:beforeunload={unloadDecrementCounter}
+  on:visibilitychange={updateCounterOnVisibility}
 />
 
 <div class="hero min-h-screen bg-base-200">
