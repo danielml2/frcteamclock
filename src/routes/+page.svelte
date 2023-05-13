@@ -2,6 +2,10 @@
 <script>
   import { onDestroy } from "svelte";
   import teamTimeData from "../timeData.json"
+  import { dev } from '$app/environment';
+  import { inject } from '@vercel/analytics';
+ 
+  inject({ mode: dev ? 'development' : 'production' });
 
   let displayText = "Loading..";
   let moreInfoOpen = false;
