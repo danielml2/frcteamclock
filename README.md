@@ -9,5 +9,6 @@ All the avatars are taken from the latest 'Team Avatar' the team has set for the
 ## Screenshots
 ![](https://i.imgur.com/zBSq6PS.png)
 ![](https://i.imgur.com/aRprBqR.png)
+
 _Example of the 'More Info' tab opened for team 1942:_
 ![](https://i.imgur.com/qcDxpxS.png)
